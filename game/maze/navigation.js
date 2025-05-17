@@ -1,5 +1,5 @@
 document.onkeydown = function(event) {
-    
+
     switch (event.keyCode) {
         // esc key to display settings overlay
         case 27:
@@ -47,7 +47,7 @@ document.onkeydown = function(event) {
 
         case 38:
         case 87:
-            
+
             paintTrace("top");
             break;
 
@@ -59,7 +59,7 @@ document.onkeydown = function(event) {
 
         case 40:
         case 83:
-            
+
             paintTrace("bottom");
             break;
 
@@ -101,39 +101,39 @@ function paintTrace(direction) {
         case "right":
 
             if (currentCell.style.borderRight != "") {
-                
+
                 colPosition++;
 
-            } 
+            }
 
             break;
 
         case "left":
 
             if (currentCell.style.borderLeft != "") {
-                
+
                 colPosition--;
 
-            } 
+            }
             break;
 
         case "top":
 
             if (currentCell.style.borderTop != "") {
-                
+
                 rowPosition--;
 
-            } 
+            }
 
             break;
 
         case "bottom":
 
             if (currentCell.style.borderBottom != "") {
-                
+
                 rowPosition++;
 
-            } 
+            }
             break;
 
     }
@@ -157,7 +157,7 @@ function toggleSettings() {
 
         document.getElementById("controller_container").style.display = "";
     }
-        
+
 
 }
 
@@ -171,10 +171,7 @@ function showResults() {
     console.log("show results");
     document.getElementById("results_container").style.visibility = "visible";
     var time = document.getElementById("stopwatch").innerHTML;
-    var message = "I mastered a "+mazeWidth+" x "+mazeHeight+" maze in "+time+".";
-    document.getElementById("twitterShareUrl").setAttribute("href", twitterShareUrl + message + " Challenge me on " + window.location +".");
-    document.getElementById("telegramShareUrl").setAttribute("href", telegramShareUrl.replace("<TEXT>", message).replace("<URL>", " Challenge me on " + window.location +"."));
-    
+
     document.getElementById("timeResults").innerHTML = time;
 
 }
@@ -209,7 +206,7 @@ function revealNeighbourWalls(rowPosition, colPosition) {
 
             console.log("middle");
             // left cell
-            removeInvisibleWallClass(rowPosition, colPosition - 1); 
+            removeInvisibleWallClass(rowPosition, colPosition - 1);
             // bottom-left cell
             removeInvisibleWallClass(rowPosition + 1, colPosition - 1);
             // bottom cell
@@ -267,7 +264,7 @@ function revealNeighbourWalls(rowPosition, colPosition) {
 
     // middle row
     } else {
-    
+
         // first col
         if (colPosition - 1 == 0) {
 
@@ -288,7 +285,7 @@ function revealNeighbourWalls(rowPosition, colPosition) {
 
             console.log("last");
             // top-left cell
-            removeInvisibleWallClass(rowPosition - 1, colPosition - 1); 
+            removeInvisibleWallClass(rowPosition - 1, colPosition - 1);
             // top cell
             removeInvisibleWallClass(rowPosition - 1, colPosition);
             // left cell
@@ -321,7 +318,7 @@ function revealNeighbourWalls(rowPosition, colPosition) {
             removeInvisibleWallClass(rowPosition + 1, colPosition);
 
         }
- 
+
     }
 
 

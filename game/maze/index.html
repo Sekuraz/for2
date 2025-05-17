@@ -8,15 +8,6 @@
         <script src="stopWatch.js"></script>
         <script src="initEvents.js"></script>
         <script src="getters.js"></script>
-        <!-- thanks for the compression library
-        https://pieroxy.net/blog/pages/lz-string/index.html  -->
-        <script language="javascript" src="lz-string.min.js"></script>
-
-        <!-- thanks for the simple WebRTC implementation
-            https://peerjs.com/ -->
-        <script src="peerjs.min.js"></script>
-
-
     </head>
 <script>
 
@@ -58,13 +49,14 @@ function init() {
             <!-- <div><input class="settings" type="checkbox" id="noDetours"> no detours</div> -->
             <div><input class="settings" type="checkbox" id="explorerMode"> explorer mode (walls have to be explored)</div>
             <hr />
+            <!--
             <div>
                 <i>Press the button to create your multiplayer session url and share this url with your friend to challenge him</i>
                 <br />
                 <button id="hostMultiPlayerSession">challenge another player</button>
                 <input type="text" id="multiPlayerLink"></input>
             </div>
-
+            -->
             <div>
                 R - Create new maze<br/>
                 Cursor keys - navigate<br/>
@@ -77,8 +69,6 @@ function init() {
         <div id="results">
             You did it<br />
             Your time: <span id="timeResults"></span><br />
-            <a id="twitterShareUrl" href="" target="_blank">Brag on Twitter</a><br />
-            <a id="telegramShareUrl" href="" target="_blank">Brag on Telegram</a>
         </div>
     </div>
     <div id="maze_container" style="overflow-wrap: break-word; line-height: 14px; letter-spacing: -2px;">

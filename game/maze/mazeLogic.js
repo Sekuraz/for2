@@ -9,13 +9,6 @@ function getParameters() {
 
 function initMaze() {
 
-    if(getParameters()[0] == "hostId") {
-
-        var multiPlayerId = getParameters()[1];
-
-        connectToHost(multiPlayerId);
-
-    } else
     if(getParameters()[0] == "mazeData") {
 
         var encodedMazeData = getParameters()[1];
@@ -170,12 +163,12 @@ function exportMaze() {
     };
 
     var mazeDataJson = JSON.stringify(mazeData);
-
-    localStorage.setItem("compressedMazeData",LZString.compressToUTF16(mazeDataJson));
-
-    shareUrl = window.location + "?mazeData=" + localStorage.getItem("compressedMazeData");
-    document.getElementById("mazeDataJson").value = mazeDataJson;
-    document.getElementById("shareMazeData").setAttribute("href", shareUrl);
+    //
+    // localStorage.setItem("compressedMazeData",LZString.compressToUTF16(mazeDataJson));
+    //
+    // shareUrl = window.location + "?mazeData=" + localStorage.getItem("compressedMazeData");
+    // document.getElementById("mazeDataJson").value = mazeDataJson;
+    // document.getElementById("shareMazeData").setAttribute("href", shareUrl);
 
 }
 
@@ -201,13 +194,13 @@ function createMaze() {
 
         var currentCell = document.getElementById("cell_" + startAtRow + "_" + startAtCol);
 
-        if (currentCell.getAttribute("occupied") === "true") {
+        if (currentCell.getAttribute("occupied") == "true") {
 
             addRoute(startAtRow, startAtCol, true);
 
         }
 
-        if (startAtCol === mazeWidth) {
+        if (startAtCol == mazeWidth) {
 
             startAtRow++;
             startAtCol = 1;
@@ -220,7 +213,7 @@ function createMaze() {
     }
 }
 
-function getNextExits(rowIndex, colIndex) {
+function getNextExits(rowIndex, colIndex, createDetour) {
 
     var nextExits = [];
 
@@ -231,7 +224,7 @@ function getNextExits(rowIndex, colIndex) {
             case "right":
                 // if this is a detour call (no route to exit), ignore right movement
                 // // when this would lead to the exit
-                if (colIndex + 1 == mazeWidth && rowIndex == mazeHeight) {
+                if (createDetour == true && colIndex + 1 == mazeWidth && rowIndex == mazeHeight) {
 
                     nextPossibleCell == null;
 
@@ -250,7 +243,7 @@ function getNextExits(rowIndex, colIndex) {
             case "bottom":
                 // if this is a detour call (no route to exit), ignore bottom movement
                 // when this would lead to the exit
-                if (colIndex == mazeWidth && rowIndex + 1 == mazeHeight) {
+                if (createDetour == true && colIndex == mazeWidth && rowIndex + 1 == mazeHeight) {
 
                     nextPossibleCell == null;
 
