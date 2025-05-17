@@ -17,7 +17,8 @@ function initMaze() {
         importMaze(mazeDataJson);
 
     } else {
-
+        document.getElementById("notice").innerHTML = "Please wait";
+        hideResults();
         getDemoMode();
 
         createMaze();
@@ -28,21 +29,20 @@ function initMaze() {
 
     rowPosition = 1;
     colPosition = 1;
+    path = "";
 
     currentCell = document.getElementById("cell_" + rowPosition + "_" + colPosition);
     currentCell.style.backgroundColor = backgroundColorPosition;
 
-    if (demoMode == false) {
 
-        document.getElementById("maze").style.visibility = "hidden";
 
-        document.getElementById("notice").innerHTML = "Maze is ready. <br />Press <i>Enter</i> to start.<br />Press <i>Esc</i> to show settings and help.</div>";
+    document.getElementById("maze").style.visibility = "hidden";
 
-        if (stopWatchActive == true) {
-            stopWatchActive = false;
-            stopStopWatch();
-        }
+    document.getElementById("notice").innerHTML = "Maze is ready. <br />Press <i>Enter</i> to start.<br />Press <i>Esc</i> to show settings and help.</div>";
 
+    if (stopWatchActive == true) {
+        stopWatchActive = false;
+        stopStopWatch();
     }
 
     if (explorerMode == true) {
@@ -69,7 +69,6 @@ function importMaze(mazeDataJson) {
 
     mazeWidth = mazeData.width;
     mazeHeight = mazeData.height;
-    demoMode = mazeData.demoMode;
     blackTrace = mazeData.blackTrace;
     explorerMode = mazeData.explorerMode;
     noDetours = mazeData.noDetours;
@@ -105,7 +104,7 @@ function importMaze(mazeDataJson) {
 
                 }
 
-            };
+            }
 
             // bottom border set?
             if (borders[cellIndex][1] != "x") {
@@ -158,18 +157,11 @@ function exportMaze() {
         "width": mazeWidth,
         "height": mazeHeight,
         "borders": mazeBorders,
-        "demoMode": demoMode,
         "explorerMode": explorerMode,
     };
 
     var mazeDataJson = JSON.stringify(mazeData);
-    //
-    // localStorage.setItem("compressedMazeData",LZString.compressToUTF16(mazeDataJson));
-    //
-    // shareUrl = window.location + "?mazeData=" + localStorage.getItem("compressedMazeData");
-    // document.getElementById("mazeDataJson").value = mazeDataJson;
-    // document.getElementById("shareMazeData").setAttribute("href", shareUrl);
-
+    document.getElementById("mazeDataJson").value = mazeDataJson;
 }
 
 function createMaze() {

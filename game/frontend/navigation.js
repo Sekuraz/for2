@@ -10,15 +10,10 @@ document.onkeydown = function(event) {
         // enter key revelas maze and starts stop watch
         case 13:
 
-            if (demoMode == false) {
-
-                document.getElementById("maze").style.visibility = "visible";
-                stopWatchActive = true;
-                startTime = new Date().getTime();
-                interval = setInterval(startStopWatch, 1); // 1: millisecond
-
-            }
-
+            document.getElementById("maze").style.visibility = "visible";
+            stopWatchActive = true;
+            startTime = new Date().getTime();
+            interval = setInterval(startStopWatch, 1); // 1: millisecond
             break;
 
         // i k j l keys to change width / height u o for both, width and height
@@ -34,7 +29,9 @@ document.onkeydown = function(event) {
             break;
         // r key re-creates maze and hides it
         case 82:
-
+            if (debug) {
+                location.reload();
+            }
             initMaze();
 
             break;
@@ -66,7 +63,7 @@ document.onkeydown = function(event) {
     }
 
 
-    if (cursorKeyCodes.includes(event.keyCode) && demoMode == false) {
+    if (cursorKeyCodes.includes(event.keyCode)) {
 
         if (stopWatchActive == false && rowPosition != mazeHeight && colPosition != mazeWidth) {
 
@@ -81,6 +78,7 @@ document.onkeydown = function(event) {
                 stopWatchActive = false;
                 stopStopWatch();
                 showResults();
+                uploadPath();
 
             }
 
@@ -103,6 +101,7 @@ function paintTrace(direction) {
             if (currentCell.style.borderRight != "") {
 
                 colPosition++;
+                path += "r"
 
             }
 
@@ -113,6 +112,7 @@ function paintTrace(direction) {
             if (currentCell.style.borderLeft != "") {
 
                 colPosition--;
+                path += "l"
 
             }
             break;
@@ -122,6 +122,7 @@ function paintTrace(direction) {
             if (currentCell.style.borderTop != "") {
 
                 rowPosition--;
+                path += "t"
 
             }
 
@@ -132,6 +133,7 @@ function paintTrace(direction) {
             if (currentCell.style.borderBottom != "") {
 
                 rowPosition++;
+                path += "b"
 
             }
             break;
@@ -173,7 +175,6 @@ function showResults() {
     var time = document.getElementById("stopwatch").innerHTML;
 
     document.getElementById("timeResults").innerHTML = time;
-
 }
 
 function revealNeighbourWalls(rowPosition, colPosition) {
@@ -328,5 +329,20 @@ function removeInvisibleWallClass(rowPosition, colPosition) {
 
     neighbourCell = document.getElementById("cell_" + (rowPosition) + "_" + (colPosition));
     neighbourCell.classList.remove("invisibleWall");
+
+}
+
+function uploadPath() {
+    const without_path = document.getElementById("mazeDataJson").value;
+    let data = without_path.slice(0, -1) + ', "path": "' + path + '"}'
+
+    fetch(uploadUrl, {
+        method: 'PUT',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: data
+    }).then(data => console.log(data)).catch(err => console.log(err));
+
 
 }

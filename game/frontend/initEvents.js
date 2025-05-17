@@ -23,13 +23,6 @@ function initEvents() {
         e.preventDefault();
     }
 
-    document.getElementById("demoMode").onclick = function() {
-        demoMode = this.checked;
-        if (demoMode == true) {
-            document.getElementById("maze").style.visibility = "visible";
-        }
-    }
-
     document.getElementById("importMazeData").onclick = function() {
 
         var mazeDataJson = document.getElementById("importMazeData").value;
