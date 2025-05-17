@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="styles.css">
+        <script src="settings.js"></script>
+        <script src="mazeLogic.js"></script>
+        <script src="navigation.js"></script>
+        <script src="stopWatch.js"></script>
+        <script src="initEvents.js"></script>
+        <script src="getters.js"></script>
+        <!-- thanks for the compression library
+        https://pieroxy.net/blog/pages/lz-string/index.html  -->
+        <script language="javascript" src="lz-string.min.js"></script>
+
+        <!-- thanks for the simple WebRTC implementation
+            https://peerjs.com/ -->
+        <script src="peerjs.min.js"></script>
+
+
+    </head>
+<script>
+
+window.addEventListener("load", init);
+window.addEventListener("resize", setTableSize);
+
+function init() {
+
+    rowPosition = 1;
+    colPosition = 1;
+    stopWatchActive = false;
+    initMaze();
+
+    initEvents();
+
+}
+
+</script>
+
+<div id="main_container">
+    <div id="stopwatch_container">
+        <div id="stopwatch">00:00:00:000</div>
+        <div id="spacer">|</div>
+        <div id="showSettingsContainer"><a id="showSettings" href="">...</a></div>
+
+    </div>
+    <div id="controller_container">
+        <div id="controller">
+            <div id="mazeData">
+                <i>Share the maze using JSON and this textfield or share the maze via the share link</i>
+                <input id="mazeDataJson" type="text"></input>
+                <button id="importMazeData">import maze</button>
+                <a id="shareMazeData" href="" target=_blank>share</a>
+            </div>
+            <div>Width <input class="settings" type="text" id="mazeWidth" value=10>(j/l keys)</div>
+            <div>Height <input class="settings" type="text" id="mazeHeight" value=10>(i/k keys)</div>
+            <div><input class="settings" type="checkbox" id="demoMode"> demo mode (no stop watch)</div>
+            <!-- <div><input class="settings" type="checkbox" id="simpleMode"> simple mode for beginners</div> -->
+            <!-- <div><input class="settings" type="checkbox" id="noDetours"> no detours</div> -->
+            <div><input class="settings" type="checkbox" id="explorerMode"> explorer mode (walls have to be explored)</div>
+            <hr />
+            <div>
+                <i>Press the button to create your multiplayer session url and share this url with your friend to challenge him</i>
+                <br />
+                <button id="hostMultiPlayerSession">challenge another player</button>
+                <input type="text" id="multiPlayerLink"></input>
+            </div>
+
+            <div>
+                R - Create new maze<br/>
+                Cursor keys - navigate<br/>
+                u - decrease width and height<br/>
+                o - increase width and height
+            </div>
+        </div>
+    </div>
+    <div id="results_container">
+        <div id="results">
+            You did it<br />
+            Your time: <span id="timeResults"></span><br />
+            <a id="twitterShareUrl" href="" target="_blank">Brag on Twitter</a><br />
+            <a id="telegramShareUrl" href="" target="_blank">Brag on Telegram</a>
+        </div>
+    </div>
+    <div id="maze_container" style="overflow-wrap: break-word; line-height: 14px; letter-spacing: -2px;">
+        <table id="maze"></table>
+        <div id="notice"></div>
+
+    </div>
+</html>
