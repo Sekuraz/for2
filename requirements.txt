@@ -1,0 +1,8 @@
+flask
+couchdb
+pandas
+jax[cuda12]
+keras
+aiocouch
+numpy
+tensorflow
