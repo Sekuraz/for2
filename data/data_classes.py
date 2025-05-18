@@ -5,8 +5,6 @@ import numpy as np
 
 from .enum_helper import with_limits
 
-dtype = np.float16
-
 
 @with_limits
 class Opening(enum.Flag):
@@ -35,7 +33,7 @@ class Openings:
     def parse_np(self, np_array: np.ndarray):
         if np_array.dtype == np.uint8:
             self.openings = [Opening(value) for value in np_array]
-        elif np_array.dtype == np.float16:
+        elif np_array.dtype == np.float32:
             self.openings = [Opening(int(round(value * (Opening.ALL.value + 1), 0))) for value in np_array]
 
     def parse_borders(self, borders):
@@ -78,7 +76,7 @@ class Openings:
         return ret
 
     def to_np_array(self):
-        return np.array(self.openings, dtype=dtype)
+        return np.array(self.openings, dtype=np.float32)
 
 
 class Path:
@@ -98,8 +96,11 @@ class Path:
     def parse_np(self, np_path: np.ndarray):
         if np_path.dtype == np.uint8:
             self.path = [Opening(value) for value in np_path]
-        elif np_path.dtype == np.float16:
-            self.path = [Opening(np.round(value * (Opening.ALL.value + 1), 0)) for value in np_path]
+        elif np_path.dtype == np.float32:
+            np_path *= 4
+            np_path.round(0)
+            map = {0: Opening.NONE, 1: Opening.RIGHT, 2: Opening.LEFT, 3: Opening.TOP, 4: Opening.BOTTOM}
+            self.path = [map[int(value)] for value in np_path]
 
 
     def parse_string(self, path):
@@ -122,7 +123,9 @@ class Path:
         return "".join(map[elem] for elem in self.path)
 
     def to_np_array(self):
-        return np.array(self.path, dtype=dtype)
+        map = {Opening.NONE: 0, Opening.RIGHT: 0.25, Opening.LEFT: 0.5, Opening.TOP: 0.75, Opening.BOTTOM: 1.0}
+        target_values = [map[value] for value in self.path]
+        return np.array(target_values, dtype=np.float32)
 
 class Maze:
     @classmethod
