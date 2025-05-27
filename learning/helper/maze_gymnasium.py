@@ -185,12 +185,17 @@ class MazeEnv(gym.Env):
         obs = []
         actions = []
         rewards = []
+        mazes = 0
+        path_sum = 0
 
         def load_maze():
             maze = Maze.from_database(**self.loop.run_until_complete(anext(self.async_generator)))
             maze_np = maze.openings.to_np_array(typ=np.float32)
             position = np.array([0, 0], dtype=np.float32)
             path_index = 0
+            nonlocal mazes, path_sum
+            mazes += 1
+            path_sum += maze.optimal_path.length
 
             return maze_np, maze.optimal_path, position, path_index
 
@@ -215,6 +220,8 @@ class MazeEnv(gym.Env):
             position += self._opening_to_direction[step]
             path_index += 1
 
+        print(f"loaded {mazes} mazes")
+        print(f"mean path length: {path_sum / mazes:.2f}")
         return np.stack(obs), np.array(actions, dtype=np.int32), np.array(rewards)
 
 

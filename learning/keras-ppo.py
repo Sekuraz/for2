@@ -225,7 +225,7 @@ train_policy_iterations = 80
 train_value_iterations = 80
 lam = 0.97
 target_kl = 0.01
-hidden_sizes = (64, 64)
+hidden_sizes = (512, 512)
 
 # True if you want to render the environment
 render = False
@@ -265,6 +265,8 @@ X, y, _ = env.unwrapped.get_training_data(batch=16384*25 + 128)
 # for i in range(20):
 #     print(Openings(5, np_array=X[i][2:], position=X[i][:2]), y[i])
 actor.fit(X, y, epochs=20, batch_size=64, validation_split=0.1)
+
+os._exit(0)
 
 del X
 del y
@@ -354,7 +356,6 @@ for epoch in tqdm.tqdm(range(epochs)):
     print(
         f" Epoch: {epoch + 1}. Mean Return: {sum_return / num_episodes}. Mean Length: {sum_length / num_episodes}"
     )
-breakpoint()
 """
 ## Visualizations
 
