@@ -5,6 +5,7 @@ import numpy as np
 
 from .enum_helper import with_limits
 
+dtype = np.uint8
 
 @with_limits
 class Opening(enum.Flag):
@@ -21,18 +22,22 @@ class Opening(enum.Flag):
 
 
 class Openings:
-    def __init__(self, size, borders=None, np_array=None):
+    def __init__(self, size, borders=None, np_array=None, position=None):
         self.size = size
         self.openings: list[Opening] = [Opening.NONE for _ in range(size * size)]
 
         if borders:
             self.parse_borders(borders)
         if np_array is not None:
-            self.parse_np(np_array)
+            self._parse_np(np_array)
 
-    def parse_np(self, np_array: np.ndarray):
+        self.position = position
+        if position is not None:
+            self.position = np.array(position * size, dtype=np.int32)
+
+    def _parse_np(self, np_array: np.ndarray):
         if np_array.dtype == np.uint8:
-            self.openings = [Opening(value) for value in np_array]
+            self.openings = [Opening(int(value)) for value in np_array]
         elif np_array.dtype == np.float32:
             self.openings = [Opening(int(round(value * (Opening.ALL.value + 1), 0))) for value in np_array]
 
@@ -54,7 +59,7 @@ class Openings:
 
     def __getitem__(self, item) -> Opening:
         x, y = item
-        return self.openings[y * self.size + x]
+        return self.openings[int(y) * self.size + int(x)]
 
     def __setitem__(self, key, value: Opening):
         x, y = key
@@ -66,7 +71,10 @@ class Openings:
             cell_row = "|"
             border_row = "|" if y < self.size - 1 else "└"
             for x in range(self.size):
-                cell_row += "  "  # the cell is empty
+                if self.position is not None and self.position[0] == x and self.position[1] == y:
+                    cell_row += "XX"
+                else:
+                    cell_row += "  "  # the cell is empty
                 cell_row += " " if self[x, y] & Opening.RIGHT else "|"
                 border_row += "  " if self[x, y] & Opening.BOTTOM else "--"
                 border_row += "┼" if y < self.size - 1 else "-"
@@ -75,8 +83,10 @@ class Openings:
         ret = ret[:-2] + "┘"
         return ret
 
-    def to_np_array(self):
-        return np.array(self.openings, dtype=np.float32)
+    def to_np_array(self, typ=None):
+        if typ is None:
+            typ = dtype
+        return np.array(self.openings, dtype=typ)
 
 
 class Path:
@@ -87,11 +97,21 @@ class Path:
         self.length: int = 0
         self.string = None
         self.path: list[Opening] = [Opening.NONE for _ in range(size * size)]
+        self.map = {0: Opening.NONE, Opening.NONE: 0, 1: Opening.RIGHT, Opening.RIGHT: 1, 2: Opening.LEFT,
+                    Opening.LEFT: 2, 3: Opening.TOP, Opening.TOP: 3, 4: Opening.BOTTOM, Opening.BOTTOM: 4}
+
 
         if string_path:
             self.parse_string(string_path)
         if np_path is not None:
             self.parse_np(np_path)
+
+    def __iter__(self):
+        for element in self.path:
+            if element is not Opening.NONE:
+                yield element
+            else:
+                return
 
     def parse_np(self, np_path: np.ndarray):
         if np_path.dtype == np.uint8:
@@ -99,8 +119,9 @@ class Path:
         elif np_path.dtype == np.float32:
             np_path *= 4
             np_path.round(0)
-            map = {0: Opening.NONE, 1: Opening.RIGHT, 2: Opening.LEFT, 3: Opening.TOP, 4: Opening.BOTTOM}
-            self.path = [map[int(value)] for value in np_path]
+            self.path = [self.map[int(value)] for value in np_path]
+        else:
+            raise NotImplementedError
 
 
     def parse_string(self, path):
@@ -122,10 +143,17 @@ class Path:
         map = {Opening.NONE: "", Opening.RIGHT: "r", Opening.LEFT: "l", Opening.TOP: "t", Opening.BOTTOM: "b"}
         return "".join(map[elem] for elem in self.path)
 
-    def to_np_array(self):
-        map = {Opening.NONE: 0, Opening.RIGHT: 0.25, Opening.LEFT: 0.5, Opening.TOP: 0.75, Opening.BOTTOM: 1.0}
-        target_values = [map[value] for value in self.path]
-        return np.array(target_values, dtype=np.float32)
+    def to_np_array(self, typ=None):
+        if typ is None:
+            typ = dtype
+        if typ in (np.int8, np.uint8):
+            return np.array(self.path, dtype=typ)
+        elif typ == np.float32:
+            map = {Opening.NONE: 0, Opening.RIGHT: 0.25, Opening.LEFT: 0.5, Opening.TOP: 0.75, Opening.BOTTOM: 1.0}
+            target_values = [map[value] for value in self.path]
+            return np.array(target_values, dtype=np.float32)
+        else:
+            raise NotImplementedError
 
 class Maze:
     @classmethod
@@ -133,13 +161,13 @@ class Maze:
         size = int(width)
         openings = Openings(size, borders)
         optimal_path = Path(size, string_path=optimalPath)
-        ret = cls(size=int(width), openings=openings, optimal_path=optimal_path, explorer_mode=explorerMode)
+        ret = cls(size=size, openings=openings, optimal_path=optimal_path, explorer_mode=explorerMode)
         ret.verify()
         return ret
 
-    def __init__(self, size, optimal_path, explorer_mode, openings=None):
+    def __init__(self, size, optimal_path, explorer_mode, openings):
         self.size = size
-        self.openings: list[Opening] = [Opening.NONE for _ in range(size * size)] if not openings else openings
+        self.openings: Openings = openings
         self.optimal_path = optimal_path
         self.explorer_mode = explorer_mode
 

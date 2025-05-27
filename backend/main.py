@@ -40,5 +40,9 @@ def development_variables():
     uploadUrl = "{url_for('upload')}";
     uploadEarly = true;
     autoreload = true;
+    function settings_init() {{
+        document.getElementById("mazeHeight").value = 5
+        document.getElementById("mazeWidth").value = 5
+    }}
     """
     return script
