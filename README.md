@@ -1,5 +1,4 @@
 # for2
-https://github.com/nickyreinert/
 
 @article{madewithml,
     author       = {Goku Mohandas},

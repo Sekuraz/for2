@@ -17,7 +17,7 @@ class MazeEnv(gym.Env):
     @maze.setter
     def maze(self, maze: Maze):
         self._maze = maze
-        self._np_openings = maze.openings.to_np_array(typ=np.float32)
+        self._np_openings = maze.openings.to_np_array_binary(typ=np.float32)
         self._correct_transitions = self._create_correct_transitions()
 
     def _create_correct_transitions(self) -> dict[tuple, Opening]:
@@ -40,6 +40,7 @@ class MazeEnv(gym.Env):
         self._np_openings = None
 
         self.maze_size = maze_size
+        self.steps = 0
 
         # Define the agent and target location; randomly chosen in `reset` and updated in `step`
         self._agent_location = np.array([0, 0], dtype=np.float32)
@@ -56,7 +57,7 @@ class MazeEnv(gym.Env):
         self.observation_space = gym.spaces.Box(
             low=0,
             high=1,  # maximum possible value
-            shape=(2 + self.maze_size ** 2,),
+            shape=(2 + (2 * self.maze_size + 1) ** 2,), # binary representation
             dtype=np.float32
         )
 
@@ -128,6 +129,7 @@ class MazeEnv(gym.Env):
         # We need the following line to seed self.np_random
         super().reset(seed=seed)
         self.last_positions = set()
+        self.steps = 0
 
 
         # Choose the agent's location uniformly at random
@@ -146,6 +148,10 @@ class MazeEnv(gym.Env):
     def step(self, action):
         # Map the action (element of {0,1,2,3}) to the direction we walk in
         opening = self._action_to_opening[action]
+
+        self.steps += 1
+        if self.steps == 64:
+            return self._get_obs(), -1, True, False, self._get_info()
 
         # ran into a wall
         if self.maze.openings[self._agent_location] & opening != opening:
@@ -190,7 +196,7 @@ class MazeEnv(gym.Env):
 
         def load_maze():
             maze = Maze.from_database(**self.loop.run_until_complete(anext(self.async_generator)))
-            maze_np = maze.openings.to_np_array(typ=np.float32)
+            maze_np = maze.openings.to_np_array_binary(typ=np.float32)
             position = np.array([0, 0], dtype=np.float32)
             path_index = 0
             nonlocal mazes, path_sum
@@ -210,7 +216,7 @@ class MazeEnv(gym.Env):
             obs.append(np.concatenate((position / self.maze_size, maze_np)))
             step = optimal_path.path[path_index]
             actions.append(self._opening_to_action[step])
-            rewards.append((-0.01))
+            rewards.append((-0.001))
 
             # ### debug
             # op = Openings(self.maze_size, np_array=maze_np, position=position / self.maze_size)

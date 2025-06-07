@@ -225,7 +225,7 @@ train_policy_iterations = 80
 train_value_iterations = 80
 lam = 0.97
 target_kl = 0.01
-hidden_sizes = (512, 512)
+hidden_sizes = (64, 64)
 
 # True if you want to render the environment
 render = False
@@ -261,12 +261,10 @@ episode_return, episode_length = 0, 0
 
 ## pre-train
 actor.compile(optimizer='adam', loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
-X, y, _ = env.unwrapped.get_training_data(batch=16384*25 + 128)
+X, y, _ = env.unwrapped.get_training_data(batch=16384*2 + 128)
 # for i in range(20):
-#     print(Openings(5, np_array=X[i][2:], position=X[i][:2]), y[i])
+#     print(X[i][2:].reshape((21, 21)), X[i][:2]*10, y[i])
 actor.fit(X, y, epochs=20, batch_size=64, validation_split=0.1)
-
-os._exit(0)
 
 del X
 del y
@@ -274,8 +272,8 @@ del y
 ## Train
 """
 # freeze to train the critic
-for layer in actor.layers[:-1]:
-    layer.trainable = False
+# for layer in actor.layers[:-1]:
+#     layer.trainable = False
 
 # Iterate over the number of epochs
 for epoch in tqdm.tqdm(range(epochs)):
@@ -325,7 +323,6 @@ for epoch in tqdm.tqdm(range(epochs)):
             buffer.finish_trajectory(last_value)
             sum_return += episode_return
             sum_length += episode_length
-            print(episode_length)
             num_episodes += 1
             observation, _ = env.reset()
             episode_return, episode_length = 0, 0

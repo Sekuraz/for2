@@ -88,6 +88,21 @@ class Openings:
             typ = dtype
         return np.array(self.openings, dtype=typ)
 
+    def to_np_array_binary(self, typ=None):
+        if typ is None:
+            typ = dtype
+        res = [1] * (self.size * 2 + 1)
+        for y in range(self.size):
+            cell_row = [1]
+            border_row = [1]
+            for x in range(self.size):
+                cell_row.append(0)
+                cell_row.append(0 if self[x, y] & Opening.RIGHT else 1)
+                border_row.append(0 if self[x, y] & Opening.BOTTOM else 1)
+                border_row.append(1)
+            res.extend(cell_row)
+            res.extend(border_row)
+        return np.array(res, dtype=typ)
 
 class Path:
     def __init__(self, size, string_path=None, np_path=None):
