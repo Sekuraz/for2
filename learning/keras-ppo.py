@@ -8,21 +8,6 @@ Accelerator: None
 """
 
 """
-## Introduction
-
-This code example solves the CartPole-v1 environment using a Proximal Policy Optimization (PPO) agent.
-
-### CartPole-v1
-
-A pole is attached by an un-actuated joint to a cart, which moves along a frictionless track.
-The system is controlled by applying a force of +1 or -1 to the cart.
-The pendulum starts upright, and the goal is to prevent it from falling over.
-A reward of +1 is provided for every timestep that the pole remains upright.
-The episode ends when the pole is more than 15 degrees from vertical, or the cart moves more than 2.4 units from the center.
-After 200 steps the episode ends. Thus, the highest return we can get is equal to 200.
-
-[CartPole-v1](https://gymnasium.farama.org/environments/classic_control/cart_pole/)
-
 ### Proximal Policy Optimization
 
 PPO is a policy gradient method and can be used for environments with either discrete or continuous action spaces.
@@ -216,7 +201,7 @@ def train_value_function(observation_buffer, return_buffer):
 
 # Hyperparameters of the PPO algorithm
 steps_per_epoch = 1024
-epochs = 10000
+epochs = 10
 gamma = 0.99
 clip_ratio = 0.2
 policy_learning_rate = 1e-5
@@ -261,7 +246,7 @@ episode_return, episode_length = 0, 0
 
 ## pre-train
 actor.compile(optimizer='adam', loss=keras.losses.SparseCategoricalCrossentropy(from_logits=True), metrics=["accuracy"])
-X, y, _ = env.unwrapped.get_training_data(batch=16384*2 + 128)
+X, y, _ = env.unwrapped.get_training_data(batch=4096)
 # for i in range(20):
 #     print(X[i][2:].reshape((21, 21)), X[i][:2]*10, y[i])
 actor.fit(X, y, epochs=20, batch_size=64, validation_split=0.1)
@@ -274,6 +259,8 @@ del y
 # freeze to train the critic
 # for layer in actor.layers[:-1]:
 #     layer.trainable = False
+
+returns = []
 
 # Iterate over the number of epochs
 for epoch in tqdm.tqdm(range(epochs)):
@@ -353,6 +340,9 @@ for epoch in tqdm.tqdm(range(epochs)):
     print(
         f" Epoch: {epoch + 1}. Mean Return: {sum_return / num_episodes}. Mean Length: {sum_length / num_episodes}"
     )
+    returns.append(sum_return / num_episodes)
+
+print("%.2f" % (sum(returns) / len(returns)))
 """
 ## Visualizations
 

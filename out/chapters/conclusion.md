@@ -1,4 +1,9 @@
 # Effectiveness
+As seen in the previous figure \ref{fig:final.png}, the amount of collected data has a significant influence over the
+collected reward of the agent.
+This proves, that pre-training, even with a small amount of data, is an effective start for a subsequent \gls{ppo} training.
+However, those results were obtained after carefully optimizing the model and the environment representation to make
+learning as efficient as possible for the agent.
 
 # Mapping of the Problem
 In the use case presented in this work, mapping the game output to the machine learning input is comparatively easy,
