@@ -19,8 +19,8 @@ However, for this work mazes of size 10 by 10 and 5 by 5 cells which were comple
 # The Model
 For this work, a keras \footnote{see \cite{keras}} and gymnasium \footnote{see \cite{gymnasium}} based approach was chosen. 
 This approach ensures maximum reusability of the results for future work and leverages leading machine learning environments.
-The model itself consists of two dense layers with a variable number of units.
-The number of units was varied between 16 and 1024 for different problems.
+There is an actor-critic implementation for this work, however pre-training is only done on the actor model.
+The critic could be pre-trained by freezing the actor after the initial training.
 
 ## Policy Optimization
 To make this work relevant for current \gls{rl} models, \gls{ppo} as described in \cite{ppo} was chosen as the optimizer
@@ -45,11 +45,11 @@ The first encoding uses flags to represent the openings, the non-existence of wa
 The resulting integer was scaled to a value between 0 and 1.
 This leads to a very dense but not easily interpretable representation.
 The second encoding uses 0 for passable terrain and 1 for walls, which requires approximately 4 times as many input 
-variables.\footnote{$maze.size * maze.size$ and $(2 * maze.size + 1) * (2 * maze.size + 1$ for square mazes.}
+variables.\footnote{$maze.size * maze.size$ in contrast to $(2 * maze.size + 1) * (2 * maze.size + 1)$ for square mazes.}
 Both encodings use a flat array.
 The current position was scaled to a value between 0 and 1 and then prepended to the observation.
 
 \bigskip
-```
+```{#obs .python caption="Observation encoding with numpy."}
 observation = np.array([pos.x / maze.size, pos.y / maze.size, *encoded_maze])
 ```

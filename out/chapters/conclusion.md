@@ -1,6 +1,11 @@
-Due to HAWK not being entirely stable, performance analysis is difficult in general.
-However, there was a lot of insight gained into different tools to analyse HPC performance and how to use HPC resources
-provided by big supercomputers.
-In the end the work done so far was transferred to the supervisor and parts already shared with the developer team.
-This can be taken further, as soon as HAWK stability issues are resolved.
+# Effectiveness
 
+# Mapping of the Problem
+In the use case presented in this work, mapping the game output to the machine learning input is comparatively easy,
+because the \gls{rl} model and the human players have the same task.
+That allowed for this work to be implemented quickly and see first promising results.
+However, finding proper levels of abstraction between the game and the \gls{rl} application in the real world requires future study.
+
+It seems to be most promising to look at the input of the \gls{rl} task and develop a game which can generate those inputs.
+Especially in micro robotics, like SwarmRL, this can be a problem, if there is more than one agent involved in a task.
+This would require cooperation of every player involved in order to present a realistic policy for this multi-agent system.

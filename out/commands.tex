@@ -15,6 +15,17 @@
     \end{figure}
 }
 
+\newcommand{\imagehere}[3]{
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.6\textwidth]{#1}
+        \caption{#2}
+        \label{fig:#1}
+        \caption*{#3}
+        %TODO smaller
+    \end{figure}
+}
+
 % the % is important after the first half
 \newcommand{\imagesidebyside}[4]{
     \begin{figure}
