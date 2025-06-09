@@ -351,6 +351,7 @@ function createBlankMaze() {
 
         var row = document.createElement("tr");
         row.setAttribute("id", "row_" + rowIndex);
+        row.setAttribute("style", "height: " + 1/mazeHeight * 100 + "%;");
 
         for (colIndex = 1; colIndex <= mazeWidth; colIndex++) {
 
@@ -381,7 +382,10 @@ function createBlankMaze() {
         tbody.appendChild(row);
 
     }
+    colgroup = document.createElement("colgroup");
+    colgroup.innerHTML = ('<col style="width: ' + 1/mazeWidth * 100 + '%;">').repeat(mazeWidth);
 
+    table.appendChild(colgroup);
     table.appendChild(tbody);
 
 }
