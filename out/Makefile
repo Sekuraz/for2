@@ -6,7 +6,7 @@ pandoc = pandoc
 # Main file name
 MASTER_TEX = project.tex
 
-project.pdf: $(MASTER_TEX) chapters/introduction.tex chapters/instrumentation.tex chapters/prelim.tex chapters/results.tex chapters/issues.tex chapters/conclusion.tex bibliography.bib
+project.pdf: $(MASTER_TEX) chapters/introduction.tex chapters/this_work.tex chapters/game.tex chapters/learning.text chapters/results.tex chapters/issues.tex chapters/conclusion.tex chapters/appendix.tex bibliography.bib
 	$(latexmk) $(MASTER_TEX)
 
 
@@ -16,4 +16,3 @@ clean:
 
 chapters/%.tex: chapters/%.md
 	$(pandoc) --listings -t latex -o $@ $<
-

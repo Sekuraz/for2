@@ -5,16 +5,34 @@
 \newcommand{\fref}[1]{\footnote{See the definition  of the \texttt{#1} clause in paragraph \ref{#1-clause}}}
 
 \newcommand{\image}[3]{
-   \begin{figure}
-       \centering
-       \includegraphics[width=0.8\textwidth]{#1}
-       \caption{#2}
-       \label{fig:#1}
-       \caption*{#3}
-       %TODO smaller
-   \end{figure}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\textwidth]{#1}
+        \caption{#2}
+        \label{fig:#1}
+        \caption*{#3}
+        %TODO smaller
+    \end{figure}
 }
 
+% the % is important after the first half
+\newcommand{\imagesidebyside}[4]{
+    \begin{figure}
+        \centering
+        \begin{minipage}{.5\textwidth}
+            \centering
+            \includegraphics[width=0.8\linewidth]{#1}
+            \caption{#2}
+            \label{fig:#1}
+        \end{minipage}%
+        \begin{minipage}{.5\textwidth}
+            \centering
+            \includegraphics[width=0.8\linewidth]{#3}
+            \caption{#4}
+            \label{fig:#3}
+        \end{minipage}
+    \end{figure}
+}
 
 
 %wird fuer Tabellen benötigt (z.B. >{centering\RBS}p{2.5cm} erzeugt einen zentrierten 2,5cm breiten Absatz in einer Tabelle
